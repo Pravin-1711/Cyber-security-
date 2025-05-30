@@ -1,0 +1,149 @@
+Fail2Ban is a powerful tool that scans log files (e.g., /var/log/auth.log, /var/log/apache2/access.log) for suspicious patterns (failed login attempts, probing, etc.) and bans offending IP addresses by updating firewall rules.
+
+Here’s a complete procedure, algorithm, and necessary commands to set it up:
+
+
+---
+
+✅ Procedure to Use Fail2Ban
+
+1. Install Fail2Ban
+
+On Debian/Ubuntu:
+
+sudo apt update
+sudo apt install fail2ban -y
+
+On CentOS/RHEL:
+
+sudo yum install epel-release
+sudo yum install fail2ban -y
+
+
+---
+
+2. Create a Local Configuration File
+
+Copy the default jail configuration file:
+
+sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
+
+
+---
+
+3. Edit the Configuration (jail.local)
+
+Open the file:
+
+sudo nano /etc/fail2ban/jail.local
+
+Basic Global Settings:
+
+[DEFAULT]
+bantime = 600                # Ban duration in seconds
+findtime = 300               # Time window to count failures
+maxretry = 5                 # Number of allowed failures
+backend = auto
+usedns = warn
+
+
+---
+
+4. Enable a Specific Jail (e.g., SSH)
+
+Inside jail.local, enable a jail:
+
+[sshd]
+enabled = true
+port    = ssh
+logpath = /var/log/auth.log
+maxretry = 3
+
+Other examples:
+
+Apache: /var/log/apache2/access.log
+
+Nginx: /var/log/nginx/error.log
+
+
+
+---
+
+5. Create/Customize a Filter (Optional)
+
+Filters are located in /etc/fail2ban/filter.d/.
+
+Each filter is a regex pattern that matches malicious log entries.
+
+Example for SSH (sshd.conf):
+
+[Definition]
+failregex = ^%(__prefix_line)sFailed password for .* from <HOST> port \d+ ssh2
+ignoreregex =
+
+
+---
+
+6. Start and Enable Fail2Ban
+
+sudo systemctl start fail2ban
+sudo systemctl enable fail2ban
+
+
+---
+
+7. Check Status
+
+sudo fail2ban-client status
+sudo fail2ban-client status sshd
+
+
+---
+
+🧠 Fail2Ban Algorithm Overview
+
+1. Monitor logs defined in logpath.
+
+
+2. Use regex filters to match suspicious activity (e.g., failed logins).
+
+
+3. Count failures over a period (findtime).
+
+
+4. If maxretry is exceeded:
+
+Trigger action: ban IP using iptables, firewalld, or other methods.
+
+
+
+5. Unban IPs after bantime unless manually configured otherwise.
+
+
+
+
+---
+
+🔧 Useful Commands
+
+Manually ban an IP:
+
+sudo fail2ban-client set sshd banip <IP_ADDRESS>
+
+Unban IP:
+
+sudo fail2ban-client set sshd unbanip <IP_ADDRESS>
+
+Reload Fail2Ban:
+
+sudo systemctl reload fail2ban
+
+Check logs:
+
+sudo cat /var/log/fail2ban.log
+
+
+
+---
+
+Let me know if you'd like help writing a custom filter for a specific log format or service (e.g., Nginx, Apache, Postfix, etc.).
