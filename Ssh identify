@@ -1,0 +1,88 @@
+To identify the IP address of a machine running an SSH server, you can follow these steps depending on whether you are scanning your own network or already have access to the target machine.
+
+
+---
+
+🔍 1. From the Attacker Machine (e.g., Kali Linux)
+
+✅ Method: Use Nmap to Scan for SSH (Port 22)
+
+Run this command to scan your local network for machines with SSH open:
+
+nmap -p 22 --open -sV 192.168.1.0/24
+
+Replace 192.168.1.0/24 with your network range.
+
+-p 22 scans for SSH.
+
+--open filters only hosts with the port open.
+
+-sV detects the service version.
+
+
+🔎 Sample Output:
+
+Nmap scan report for 192.168.1.10
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.6p1 Ubuntu 4ubuntu0.3
+
+> This tells you that the machine at 192.168.1.10 has SSH running.
+
+
+
+
+---
+
+💻 2. From the Target Machine (if you have access)
+
+✅ Method: Use ip or ifconfig
+
+For newer systems:
+
+ip a
+
+Look for inet under interfaces like eth0 or wlan0.
+
+For older systems:
+
+ifconfig
+
+You'll see something like:
+
+eth0: inet 192.168.1.10  netmask 255.255.255.0
+
+This is the IP address of the machine running SSH.
+
+
+---
+
+🌐 3. Use ARP and Ping Sweep (if unsure of the range)
+
+Step 1: Identify your own IP and network
+
+ip a
+
+Suppose your IP is 192.168.1.5, then the range is likely 192.168.1.0/24.
+
+Step 2: Run Nmap Ping Sweep
+
+nmap -sn 192.168.1.0/24
+
+Then scan specific IPs for SSH as shown earlier.
+
+
+---
+
+🛡️ Pro Tip:
+
+If you’re running a lab with VMs (e.g., Kali + Metasploitable), you can use:
+
+netdiscover
+
+This shows all devices on your network with their IPs and MACs. Then scan each with nmap for port 22.
+
+
+---
+
+Let me know if you want help scanning a specific network or integrating this into an automated script.
+
